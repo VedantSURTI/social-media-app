@@ -37,7 +37,7 @@ export default function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const authState = useSelector((state) => state.auth);
-  console.log(authState);
+  // console.log(authState);
   useEffect(() => {
     if (authState.email !== "") {
       alert("You are already logged in");
@@ -68,6 +68,7 @@ export default function Login() {
           friendRequests: user.friendRequests,
           friends: user.friends,
           image: user.image,
+          backgroundImage: user.backgroundImage,
         };
         localStorage.setItem("auth", {});
         localStorage.setItem("auth", JSON.stringify(obj));
@@ -78,7 +79,8 @@ export default function Login() {
             user.lastName,
             user.friendRequests,
             user.friends,
-            user.image
+            user.image,
+            user.backgroundImage
           )
         );
         alert(`Welcome ${user.firstName}`);

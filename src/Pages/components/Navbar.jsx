@@ -56,6 +56,7 @@ export default function PrimarySearchAppBar({ state }) {
         users[i].friendRequests = state.friendRequests;
         users[i].friends = state.friends;
         users[i].image = state.image;
+        users[i].backgroundImage = state.backgroundImage;
       }
     }
     // console.log(users);

@@ -1,15 +1,15 @@
+import * as React from "react";
+
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "./components/Navbar";
-// import styles from "./Profile.module.css";
-import { useState } from "react";
 import {
   acceptRequest,
   deleteFriend,
   rejectRequest,
-  setAuth,
+  setBackgroundImage,
   setImage,
 } from "../reducers/authSlice";
-import React from "react";
+// import React from "react";
 import {
   MDBCol,
   MDBContainer,
@@ -21,33 +21,18 @@ import {
   MDBBtn,
   MDBInput,
 } from "mdb-react-ui-kit";
+import ChangeButtons from "./components/ChangeButtons";
+import { setPost } from "../reducers/postSlice";
+import { useState } from "react";
+import PersonalFeedPost from "./components/PersonalFeedPost";
 
 export default function ProfilePage() {
   const state = useSelector((state) => state.auth);
+  const [caption, setCaption] = useState("");
   const dispatch = useDispatch();
-  const [firstName, setFirstName] = useState(state.firstName);
-  const [lastName, setLastName] = useState(state.lastName);
-  const [email, setEmail] = useState(state.email);
-  const [selectedFile, setSelectedFile] = useState(null);
-  //   const [imageUrl, setImageUrl] = useState("");
-  const [newPass, setNewPass] = useState("");
   const users = JSON.parse(localStorage.getItem("users"));
   function handleDeleteFriend(email) {
     dispatch(deleteFriend(email));
-  }
-  function handleSubmit() {
-    const users = JSON.parse(localStorage.getItem("users"));
-    for (let i = 0; i < users.length; i++) {
-      if (users[i].email === email) {
-        if (firstName !== "") users[i].firstName = firstName;
-        if (lastName !== "") users[i].lastName = lastName;
-        if (newPass !== "") users[i].password = newPass;
-      }
-    }
-    localStorage.setItem("users", JSON.stringify(users));
-    dispatch(
-      setAuth(email, firstName, lastName, state.friendRequests, state.friends)
-    );
   }
 
   function handleAccept(email) {
@@ -61,44 +46,144 @@ export default function ProfilePage() {
     let file = e.target.files[0];
     // console.log(file)
     let reader = new FileReader();
-    console.log("next");
+    // console.log("next");
 
     reader.onload = function () {
       base64String = reader.result.replace("data:", "").replace(/^.+,/, "");
       dispatch(setImage(base64String));
     };
+    const users = JSON.parse(localStorage.getItem("users"));
+    for (let i = 0; i < users.length; i++) {
+      if (users[i].email === state.email) {
+        users[i].image = state.image;
+      }
+    }
+    localStorage.setItem("users", JSON.stringify(users));
+    // console.log(base64String);
     reader.readAsDataURL(file);
   }
+  function backgroundImageUpload(e) {
+    let base64String;
+    let file = e.target.files[0];
+    // console.log(file)
+    let reader = new FileReader();
+    // console.log("next");
 
+    reader.onload = function () {
+      base64String = reader.result.replace("data:", "").replace(/^.+,/, "");
+      dispatch(setBackgroundImage(base64String));
+    };
+    const users = JSON.parse(localStorage.getItem("users"));
+    for (let i = 0; i < users.length; i++) {
+      if (users[i].email === state.email) {
+        users[i].backgroundImageimage = state.backgroundImageimage;
+      }
+    }
+    localStorage.setItem("users", JSON.stringify(users));
+    // console.log(base64String);
+    reader.readAsDataURL(file);
+  }
+  function handlePostUpload(e) {
+    let base64String;
+    let file = e.target.files[0];
+    let reader = new FileReader();
+    reader.onload = function () {
+      base64String = reader.result.replace("data:", "").replace(/^.+,/, "");
+      dispatch(setPost(state.email, base64String, caption));
+    };
+    setCaption("");
+    reader.readAsDataURL(file);
+  }
   return (
     <section style={{ backgroundColor: "#eee" }}>
       <Navbar state={state} />
       <MDBContainer className="py-5">
         <MDBRow>
-          <MDBCol lg="4">
-            <MDBCard className="mb-4">
-              <MDBCardBody className="text-center">
-                <MDBCardImage
-                  src={`data:image/png;base64,${state.image}`}
-                  alt="ptofile-image"
-                  className="rounded-circle"
-                  style={{ width: "150px" }}
-                  fluid
-                />
-                <input
+          <MDBCard className="mb-4" style={{ padding: "0px" }}>
+            <MDBCardBody
+              className="text-center profile"
+              style={{
+                backgroundImage: `url(data:image/png;base64,${state.backgroundImage})`,
+              }}
+            >
+              <input
+                type="file"
+                name=""
+                id="fileId"
+                onChange={(e) => backgroundImageUpload(e)}
+                style={{ marginLeft: "1080px" }}
+              />
+              <MDBCardImage
+                src={`data:image/png;base64,${state.image}`}
+                alt="ptofile-image"
+                className="rounded-circle"
+                style={{ width: "150px", margin: "auto", display: "block" }}
+                fluid
+              />
+              <ChangeButtons handleImageUpload={imageUploaded} />
+              {/* <input
                   type="file"
                   name=""
                   id="fileId"
                   onChange={(e) => imageUploaded(e)}
-                />
-                {/* <MDBBtn onClick={handleUpload}>Upload</MDBBtn> */}
+                /> */}
+              {/* <MDBBtn onClick={handleUpload}>Upload</MDBBtn> */}
+            </MDBCardBody>
+          </MDBCard>
+          <MDBCol lg="4">
+            <MDBCard className="mb-4">
+              <MDBCardBody>
+                <MDBCardText className="mb-4">
+                  <span className="text-primary font-italic me-1">
+                    User Info
+                  </span>{" "}
+                </MDBCardText>
+                <MDBCardText className="mt-4 mb-1">
+                  Name: {state.firstName} {state.lastName}
+                </MDBCardText>
+                <MDBCardText className="mt-4 mb-1">
+                  Email: {state.email}
+                </MDBCardText>
               </MDBCardBody>
             </MDBCard>
             <MDBCard className="mb-4">
               <MDBCardBody>
                 <MDBCardText className="mb-4">
                   <span className="text-primary font-italic me-1">
-                    Friend Requests
+                    Friends ({state.friends.length})
+                  </span>{" "}
+                </MDBCardText>
+                {state.friends.map((ele) => {
+                  let fName, lName;
+                  for (let i = 0; i < users.length; i++) {
+                    if (users[i].email === ele) {
+                      fName = users[i].firstName;
+                      lName = users[i].lastName;
+                      break;
+                    }
+                  }
+                  return (
+                    <div key={ele}>
+                      <MDBCardText className="mt-4 mb-1">
+                        {fName} {lName}
+                      </MDBCardText>
+                      <MDBBtn
+                        className="me-1"
+                        color="danger"
+                        onClick={() => handleDeleteFriend(ele)}
+                      >
+                        Delete Friend
+                      </MDBBtn>
+                    </div>
+                  );
+                })}
+              </MDBCardBody>
+            </MDBCard>
+            <MDBCard className="mb-4">
+              <MDBCardBody>
+                <MDBCardText className="mb-4">
+                  <span className="text-primary font-italic me-1">
+                    Friend Requests ({state.friendRequests.length})
                   </span>{" "}
                   {state.friendRequests.map((ele) => {
                     let fName, lName;
@@ -136,96 +221,32 @@ export default function ProfilePage() {
             </MDBCard>
           </MDBCol>
           <MDBCol lg="8">
-            <MDBCard className="mb-4">
-              <MDBCardBody>
-                <MDBRow>
-                  <MDBCol sm="3">
-                    <MDBCardText> First Name</MDBCardText>
-                  </MDBCol>
-                  <MDBCol sm="9">
-                    <MDBInput
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                    ></MDBInput>
-                  </MDBCol>
-                </MDBRow>
-                <hr />
-                <MDBRow>
-                  <MDBCol sm="3">
-                    <MDBCardText>Last Name</MDBCardText>
-                  </MDBCol>
-                  <MDBCol sm="9">
-                    <MDBInput
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                    />
-                  </MDBCol>
-                </MDBRow>
-                <hr />
-                <MDBRow>
-                  <MDBCol sm="3">
-                    <MDBCardText>Email</MDBCardText>
-                  </MDBCol>
-                  <MDBCol sm="9">
-                    <MDBCardText className="text-muted">
-                      {state.email}
-                    </MDBCardText>
-                  </MDBCol>
-                </MDBRow>
-                <hr />
-                <MDBRow>
-                  <MDBCol sm="3">
-                    <MDBCardText>Password</MDBCardText>
-                  </MDBCol>
-                  <MDBCol sm="9">
-                    <MDBInput
-                      value={newPass}
-                      onChange={(e) => setNewPass(e.target.value)}
-                      type="password"
-                    />
-                  </MDBCol>
-                  <MDBBtn style={{ marginTop: "20px" }} onClick={handleSubmit}>
-                    Submit Change
-                  </MDBBtn>
-                </MDBRow>
-              </MDBCardBody>
-            </MDBCard>
-
             <MDBRow>
               <MDBCol ld="8">
-                <MDBCard className="mb-4 mb-md-0">
+                <MDBCard className="mb-4">
                   <MDBCardBody>
-                    <MDBCardText className="mb-4">
-                      <span className="text-primary font-italic me-1">
-                        Friends
-                      </span>{" "}
-                    </MDBCardText>
-                    {state.friends.map((ele) => {
-                      let fName, lName;
-                      for (let i = 0; i < users.length; i++) {
-                        if (users[i].email === ele) {
-                          fName = users[i].firstName;
-                          lName = users[i].lastName;
-                          break;
-                        }
-                      }
-                      return (
-                        <div key={ele}>
-                          <MDBCardText className="mt-4 mb-1">
-                            {fName} {lName}
-                          </MDBCardText>
-                          <MDBBtn
-                            className="me-1"
-                            color="danger"
-                            onClick={() => handleDeleteFriend(ele)}
-                          >
-                            Delete Friend
-                          </MDBBtn>
-                        </div>
-                      );
-                    })}
+                    <MDBRow>
+                      <MDBCol sm="3">
+                        <MDBCardText>Upload a post</MDBCardText>
+                      </MDBCol>
+                      <MDBCol sm="9">
+                        <MDBInput
+                          type="file"
+                          onChange={(e) => handlePostUpload(e)}
+                        ></MDBInput>
+                        <MDBInput
+                          type="text"
+                          value={caption}
+                          label="caption"
+                          onChange={(e) => setCaption(e.target.value)}
+                          style={{ marginTop: "10px" }}
+                        ></MDBInput>
+                      </MDBCol>
+                    </MDBRow>
                   </MDBCardBody>
                 </MDBCard>
+                <MDBCardText> Your Posts</MDBCardText>
+                <PersonalFeedPost />
               </MDBCol>
             </MDBRow>
           </MDBCol>
