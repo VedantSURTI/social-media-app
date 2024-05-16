@@ -2,80 +2,13 @@ import { useDispatch, useSelector } from "react-redux";
 import Navbar from "./components/Navbar";
 // import styles from "./Profile.module.css";
 import { useState } from "react";
-import { acceptRequest, deleteFriend, rejectRequest, setAuth } from "../reducers/authSlice";
-// function Profile() {
-//   const state = useSelector((state) => state.auth);
-//   const dispatch = useDispatch();
-//   const [firstName, setFirstName] = useState(state.firstName);
-//   const [lastName, setLastName] = useState(state.lastName);
-//   const [email, setEmial] = useState(state.email);
-//   const [newPass, setNewPass] = useState("");
-
-//   function handlleChange() {
-//     const users = JSON.parse(localStorage.getItem('users'));
-//     for(let i=0;i<users.length;i++){
-//         if(users[i].email === email){
-
-//         }
-//     }
-//     dispatch(
-//       setAuth(email, firstName, lastName, state.friendRequests, state.friends)
-//     );
-//   }
-//   return (
-//     <>
-//       <Navbar />
-//       <main className={styles.profile_main}>
-//         <div className={styles.user_view}>
-//           <nav className={styles.user_view_menu}>
-//             <ul className={styles.side_nav}>
-//               <li>My Friends</li>
-//               <li>Friend Requests</li>
-//             </ul>
-//           </nav>
-//           <div className={styles.user_view__content}>
-//             <div className={styles.user_view__form}>
-//               <h2>Your Account Settings</h2>
-//               <div className={styles.form}>
-//                 <div className={styles.form__group}>
-//                   <h4>First Name</h4>
-//                   <input
-//                     value={firstName}
-//                     onChange={(e) => setFirstName(e.target.value)}
-//                   ></input>
-//                 </div>
-//                 <div className={styles.form__group}>
-//                   <h4>Last Name</h4>
-//                   <input
-//                     value={lastName}
-//                     onChange={(e) => setLastName(e.target.value)}
-//                   ></input>
-//                 </div>
-//                 <div className={styles.form__group}>
-//                   <h4>Email</h4>
-//                   <input value={email}></input>
-//                 </div>
-//                 <div className={styles.form__group}>
-//                   <h4>Password</h4>
-//                   <input
-//                     value={newPass}
-//                     onChange={(e) => setNewPass(e.target.value)}
-//                   ></input>
-//                 </div>
-//               </div>
-//               <button className="change" onClick={handlleChange}>
-//                 <span>Submit</span>
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       </main>
-//     </>
-//   );
-// }
-
-// export default Profile;
-
+import {
+  acceptRequest,
+  deleteFriend,
+  rejectRequest,
+  setAuth,
+  setImage,
+} from "../reducers/authSlice";
 import React from "react";
 import {
   MDBCol,
@@ -94,7 +27,9 @@ export default function ProfilePage() {
   const dispatch = useDispatch();
   const [firstName, setFirstName] = useState(state.firstName);
   const [lastName, setLastName] = useState(state.lastName);
-  const [email, setEmial] = useState(state.email);
+  const [email, setEmail] = useState(state.email);
+  const [selectedFile, setSelectedFile] = useState(null);
+  //   const [imageUrl, setImageUrl] = useState("");
   const [newPass, setNewPass] = useState("");
   const users = JSON.parse(localStorage.getItem("users"));
   function handleDeleteFriend(email) {
@@ -114,27 +49,49 @@ export default function ProfilePage() {
       setAuth(email, firstName, lastName, state.friendRequests, state.friends)
     );
   }
+
   function handleAccept(email) {
     dispatch(acceptRequest(email));
   }
   function handleReject(email) {
     dispatch(rejectRequest(email));
   }
+  function imageUploaded(e) {
+    let base64String;
+    let file = e.target.files[0];
+    // console.log(file)
+    let reader = new FileReader();
+    console.log("next");
+
+    reader.onload = function () {
+      base64String = reader.result.replace("data:", "").replace(/^.+,/, "");
+      dispatch(setImage(base64String));
+    };
+    reader.readAsDataURL(file);
+  }
+
   return (
     <section style={{ backgroundColor: "#eee" }}>
-      <Navbar />
+      <Navbar state={state} />
       <MDBContainer className="py-5">
         <MDBRow>
           <MDBCol lg="4">
             <MDBCard className="mb-4">
               <MDBCardBody className="text-center">
                 <MDBCardImage
-                  src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
-                  alt="avatar"
+                  src={`data:image/png;base64,${state.image}`}
+                  alt="ptofile-image"
                   className="rounded-circle"
                   style={{ width: "150px" }}
                   fluid
                 />
+                <input
+                  type="file"
+                  name=""
+                  id="fileId"
+                  onChange={(e) => imageUploaded(e)}
+                />
+                {/* <MDBBtn onClick={handleUpload}>Upload</MDBBtn> */}
               </MDBCardBody>
             </MDBCard>
             <MDBCard className="mb-4">
@@ -160,14 +117,14 @@ export default function ProfilePage() {
                         <MDBBtn
                           className="me-1"
                           color="success"
-                            onClick={() => handleAccept(ele)}
+                          onClick={() => handleAccept(ele)}
                         >
                           Accept
                         </MDBBtn>
                         <MDBBtn
                           className="me-1"
                           color="danger"
-                            onClick={() => handleReject(ele)}
+                          onClick={() => handleReject(ele)}
                         >
                           Reject
                         </MDBBtn>

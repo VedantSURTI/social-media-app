@@ -9,6 +9,7 @@ if (state === null) {
     lastName: "",
     friendRequests: [],
     friends: [],
+    image: "",
   };
 } else {
   initialState = state;
@@ -19,9 +20,16 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setAuth: {
-      prepare(email, firstName, lastName, friendRequests, friends) {
+      prepare(email, firstName, lastName, friendRequests, friends, image) {
         return {
-          payload: { email, firstName, lastName, friendRequests, friends },
+          payload: {
+            email,
+            firstName,
+            lastName,
+            friendRequests,
+            friends,
+            image,
+          },
         };
       },
       reducer(state, action) {
@@ -30,6 +38,7 @@ const authSlice = createSlice({
         state.lastName = action.payload.lastName;
         state.friendRequests = action.payload.friendRequests;
         state.friends = action.payload.friends;
+        state.image = action.payload.image;
       },
     },
     resetName: {
@@ -68,11 +77,17 @@ const authSlice = createSlice({
         state.lastName = "";
         state.friendRequests = [];
         state.friends = [];
+        state.image = "";
       },
     },
     deleteFriend: {
       reducer(state, action) {
         state.friends = state.friends.filter((ele) => ele !== action.payload);
+      },
+    },
+    setImage: {
+      reducer(state, action) {
+        state.image = action.payload;
       },
     },
   },
@@ -86,5 +101,6 @@ export const {
   rejectRequest,
   logOut,
   deleteFriend,
+  setImage,
 } = authSlice.actions;
 export default authSlice.reducer;

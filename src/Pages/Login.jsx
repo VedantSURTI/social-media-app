@@ -43,7 +43,7 @@ export default function Login() {
       alert("You are already logged in");
       navigate("/homepage");
     }
-  }, [authState,navigate]);
+  }, [authState, navigate]);
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -67,6 +67,7 @@ export default function Login() {
           lastName: user.lastName,
           friendRequests: user.friendRequests,
           friends: user.friends,
+          image: user.image,
         };
         localStorage.setItem("auth", {});
         localStorage.setItem("auth", JSON.stringify(obj));
@@ -76,7 +77,8 @@ export default function Login() {
             user.firstName,
             user.lastName,
             user.friendRequests,
-            user.friends
+            user.friends,
+            user.image
           )
         );
         alert(`Welcome ${user.firstName}`);

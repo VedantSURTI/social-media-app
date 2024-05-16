@@ -19,6 +19,7 @@ import { useNavigate } from "react-router";
 import BasicModal from "./BasicModal";
 import { useDispatch } from "react-redux";
 import { logOut } from "../../reducers/authSlice";
+import { NavLink } from "react-router-dom";
 
 export default function PrimarySearchAppBar({ state }) {
   const dispatch = useDispatch();
@@ -54,6 +55,7 @@ export default function PrimarySearchAppBar({ state }) {
         users[i].lastName = state.lastName;
         users[i].friendRequests = state.friendRequests;
         users[i].friends = state.friends;
+        users[i].image = state.image;
       }
     }
     // console.log(users);
@@ -152,7 +154,9 @@ export default function PrimarySearchAppBar({ state }) {
             component="div"
             sx={{ display: { xs: "none", sm: "block" } }}
           >
-            We
+            <NavLink to="/homepage" style={{ color: "white" }}>
+              We
+            </NavLink>
           </Typography>
           {/* <Search>
             <SearchIconWrapper>
@@ -170,7 +174,7 @@ export default function PrimarySearchAppBar({ state }) {
               aria-label="show 4 new mails"
               color="inherit"
             >
-              <Badge badgeContent={0} color="error">
+              <Badge badgeContent={state.friendRequests.length} color="error">
                 <BasicModal state={state} />
               </Badge>
             </IconButton>
