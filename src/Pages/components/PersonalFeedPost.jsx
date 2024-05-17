@@ -9,6 +9,7 @@ import {
 } from "mdb-react-ui-kit";
 import { useDispatch, useSelector } from "react-redux";
 import { deletePost } from "../../reducers/postSlice";
+import CommentsAccordion from "./CommentsModal";
 
 export default function PersonalFeedPost() {
   const dispatch = useDispatch();
@@ -37,10 +38,11 @@ export default function PersonalFeedPost() {
                 >
                   Delete
                 </MDBBtn>
+                <CommentsAccordion id={postObj.id} />
               </MDBCardBody>
             </MDBCard>
           );
-        }
+        } else return <di></di>;
       })}
     </div>
   );

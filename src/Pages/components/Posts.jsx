@@ -5,12 +5,12 @@ import {
   MDBCardTitle,
   MDBCardText,
   MDBCardImage,
-  MDBBtn,
   MDBRow,
   MDBCol,
 } from "mdb-react-ui-kit";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { likePost } from "../../reducers/postSlice";
+import CommentsModal from "./CommentsModal";
 
 function LikeButton({ postId }) {
   const dispatch = useDispatch();
@@ -60,9 +60,6 @@ function LikeButton({ postId }) {
 }
 
 export default function Posts({ feed }) {
-  const dispatch = useDispatch();
-  const authState = useSelector((state) => state.auth);
-  const postState = useSelector((state) => state.post);
   const users = JSON.parse(localStorage.getItem("users"));
   let temp = [];
   for (let i = 0; i < feed.length; i++) {
@@ -106,6 +103,7 @@ export default function Posts({ feed }) {
             <MDBCardBody>
               <MDBCardText>Likes : {postObj.like}</MDBCardText>
               <LikeButton postId={postObj.id}></LikeButton>
+              <CommentsModal id={postObj.id} />
             </MDBCardBody>
           </MDBCard>
         );

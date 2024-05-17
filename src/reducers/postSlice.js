@@ -19,7 +19,7 @@ const postSlice = createSlice({
           image: action.payload.image,
           caption: action.payload.caption,
           like: 0,
-          comments: {},
+          comments: [],
           date: new Date().toISOString(),
         };
         state.push(temp);
@@ -40,8 +40,23 @@ const postSlice = createSlice({
         }
       },
     },
+    submitComment: {
+      prepare(id, email, message) {
+        return { payload: { id, email, message } };
+      },
+      reducer(state, action) {
+        for (let i = 0; i < state.length; i++) {
+          if (state[i].id === action.payload.id) {
+            state[i].comments.push({
+              email: action.payload.email,
+              message: action.payload.message,
+            });
+          }
+        }
+      },
+    },
   },
 });
 
-export const { setPost, deletePost, likePost } = postSlice.actions;
+export const { setPost, deletePost, likePost, submitComment } = postSlice.actions;
 export default postSlice.reducer;

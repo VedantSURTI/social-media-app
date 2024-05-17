@@ -1,12 +1,10 @@
 import { useSelector } from "react-redux";
 import Navbar from "./components/Navbar";
-import { useState } from "react";
 import React from "react";
 import { MDBRow, MDBCol, MDBCardText } from "mdb-react-ui-kit";
 import {
   MDBCard,
   MDBCardBody,
-  MDBCardTitle,
   MDBCardImage,
   MDBBtn,
 } from "mdb-react-ui-kit";
