@@ -150,42 +150,13 @@ export default function ProfilePage() {
               <MDBCardBody>
                 <MDBCardText className="mb-4">
                   <span className="text-primary font-italic me-1">
-                    Friends ({state.friends.length})
+                    Friends{" "}
+                    {typeof state.friends !== "undefined" &&
+                      state.friends.length}
                   </span>{" "}
                 </MDBCardText>
-                {state.friends.map((ele) => {
-                  let fName, lName;
-                  for (let i = 0; i < users.length; i++) {
-                    if (users[i].email === ele) {
-                      fName = users[i].firstName;
-                      lName = users[i].lastName;
-                      break;
-                    }
-                  }
-                  return (
-                    <div key={ele}>
-                      <MDBCardText className="mt-4 mb-1">
-                        {fName} {lName}
-                      </MDBCardText>
-                      <MDBBtn
-                        className="me-1"
-                        color="danger"
-                        onClick={() => handleDeleteFriend(ele)}
-                      >
-                        Delete Friend
-                      </MDBBtn>
-                    </div>
-                  );
-                })}
-              </MDBCardBody>
-            </MDBCard>
-            <MDBCard className="mb-4">
-              <MDBCardBody>
-                <MDBCardText className="mb-4">
-                  <span className="text-primary font-italic me-1">
-                    Friend Requests ({state.friendRequests.length})
-                  </span>{" "}
-                  {state.friendRequests.map((ele) => {
+                {typeof state.friends !== "undefined" &&
+                  state.friends.map((ele) => {
                     let fName, lName;
                     for (let i = 0; i < users.length; i++) {
                       if (users[i].email === ele) {
@@ -201,21 +172,56 @@ export default function ProfilePage() {
                         </MDBCardText>
                         <MDBBtn
                           className="me-1"
-                          color="success"
-                          onClick={() => handleAccept(ele)}
-                        >
-                          Accept
-                        </MDBBtn>
-                        <MDBBtn
-                          className="me-1"
                           color="danger"
-                          onClick={() => handleReject(ele)}
+                          onClick={() => handleDeleteFriend(ele)}
                         >
-                          Reject
+                          Delete Friend
                         </MDBBtn>
                       </div>
                     );
                   })}
+              </MDBCardBody>
+            </MDBCard>
+            <MDBCard className="mb-4">
+              <MDBCardBody>
+                <MDBCardText className="mb-4">
+                  <span className="text-primary font-italic me-1">
+                    Friend Requests{" "}
+                    {typeof state.friends !== "undefined" &&
+                      state.friendRequests.length}
+                  </span>{" "}
+                  {typeof state.friends !== "undefined" &&
+                    state.friendRequests.map((ele) => {
+                      let fName, lName;
+                      for (let i = 0; i < users.length; i++) {
+                        if (users[i].email === ele) {
+                          fName = users[i].firstName;
+                          lName = users[i].lastName;
+                          break;
+                        }
+                      }
+                      return (
+                        <div key={ele}>
+                          <MDBCardText className="mt-4 mb-1">
+                            {fName} {lName}
+                          </MDBCardText>
+                          <MDBBtn
+                            className="me-1"
+                            color="success"
+                            onClick={() => handleAccept(ele)}
+                          >
+                            Accept
+                          </MDBBtn>
+                          <MDBBtn
+                            className="me-1"
+                            color="danger"
+                            onClick={() => handleReject(ele)}
+                          >
+                            Reject
+                          </MDBBtn>
+                        </div>
+                      );
+                    })}
                 </MDBCardText>
               </MDBCardBody>
             </MDBCard>

@@ -54,6 +54,8 @@ export default function SignUp() {
         password: data.get("password"),
         friendRequests: [],
         friends: [],
+        image: "",
+        backgroundImage: "",
       };
       if (store.email === null || store.password === null)
         alert("Enter all the details");
@@ -65,7 +67,17 @@ export default function SignUp() {
         localStorage.setItem("auth", {});
         localStorage.setItem("auth", JSON.stringify(store));
         localStorage.setItem("users", JSON.stringify(usersObj));
-        dispatch(setAuth(store.email, store.firstName, store.lastName));
+        dispatch(
+          setAuth(
+            store.email,
+            store.firstName,
+            store.lastName,
+            store.friendRequests,
+            store.friends,
+            store.image,
+            store.backgroundImage
+          )
+        );
         navigate("/homepage");
       }
     } else {
@@ -78,6 +90,8 @@ export default function SignUp() {
           password: data.get("password"),
           friendRequests: [],
           friends: [],
+          image: "",
+          backgroundImage: "",
         },
       ];
       // console.log(store.email);
@@ -88,7 +102,17 @@ export default function SignUp() {
         localStorage.setItem("auth", {});
         localStorage.setItem("auth", JSON.stringify(store));
         localStorage.setItem("users", JSON.stringify(store));
-        dispatch(setAuth(store.email, store.firstName, store.lastName));
+        dispatch(
+          setAuth(
+            store.email,
+            store.firstName,
+            store.lastName,
+            store.friendRequests,
+            store.friends,
+            store.image,
+            store.backgroundImage
+          )
+        );
         navigate("/homepage");
       }
     }

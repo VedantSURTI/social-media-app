@@ -20,6 +20,7 @@ const postSlice = createSlice({
           caption: action.payload.caption,
           like: 0,
           comments: {},
+          date: new Date().toISOString(),
         };
         state.push(temp);
         return;
@@ -30,8 +31,17 @@ const postSlice = createSlice({
         return state.filter((post) => post.id !== action.payload);
       },
     },
+    likePost: {
+      reducer(state, action) {
+        for (let i = 0; i < state.length; i++) {
+          if (state[i].id === action.payload) {
+            state[i].like += 1;
+          }
+        }
+      },
+    },
   },
 });
 
-export const { setPost, deletePost } = postSlice.actions;
+export const { setPost, deletePost, likePost } = postSlice.actions;
 export default postSlice.reducer;

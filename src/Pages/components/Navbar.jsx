@@ -175,7 +175,7 @@ export default function PrimarySearchAppBar({ state }) {
               aria-label="show 4 new mails"
               color="inherit"
             >
-              <Badge badgeContent={state.friendRequests.length} color="error">
+              <Badge badgeContent={state.friendRequests ?state.friendRequests.length : 0} color="error">
                 <BasicModal state={state} />
               </Badge>
             </IconButton>

@@ -1,35 +1,35 @@
 import { useSelector } from "react-redux";
 import Navbar from "./components/Navbar";
 import { useState } from "react";
+import React from "react";
+import { MDBRow, MDBCol, MDBCardText } from "mdb-react-ui-kit";
+import {
+  MDBCard,
+  MDBCardBody,
+  MDBCardTitle,
+  MDBCardImage,
+  MDBBtn,
+} from "mdb-react-ui-kit";
+import Posts from "./components/Posts";
 
 function Main({ children }) {
-  return <main className="main">{children}</main>;
-}
-
-function Box({ children }) {
-  const [isOpen, setIsOpen] = useState(true);
-  return (
-    <div className="box">
-      <button className="btn-toggle" onClick={() => setIsOpen((open) => !open)}>
-        {isOpen ? "–" : "+"}
-      </button>
-      {isOpen && children}
-    </div>
-  );
+  return <main>{children}</main>;
 }
 
 function findEle(email, state) {
   const temp = state.friends;
-  for (let i = 0; i < temp.length; i++) {
-    if (temp[i] === email) {
-      return true;
+  if (typeof temp != "undefined") {
+    for (let i = 0; i < temp.length; i++) {
+      if (temp[i] === email) {
+        return true;
+      }
     }
   }
   return false;
 }
 function List({ users, from, state }) {
   return (
-    <ul className="list list-item">
+    <ul style={{ listStyle: "none" }}>
       {users?.map((user) => {
         if (!findEle(user.email, state)) {
           return <User user={user} key={user.email} from={from} />;
@@ -50,47 +50,62 @@ function User({ user, from }) {
     localStorage.setItem("users", JSON.stringify(users));
   }
   return (
-    <li key={user.email}>
-      {/* <img src={user.Poster} alt={`${user.Title} poster`} /> */}
-      <h3>
-        {user.firstName} {user.lastName}
-      </h3>
-      <div style={{ display: "flex" }}>
-        <p
-          style={{
-            display: "inline-block",
-            marginTop: "1rem",
-            marginBottom: "1rem",
-            marginRight: "1rem",
-          }}
-        >
-          {user.email}
-        </p>
-        <button
-          className="request"
-          alt="SEND REQUEST"
-          onClick={() => handleFriendRequest(user.email, from)}
-        >
-          <i>S</i>
-          <i>E</i>
-          <i>N</i>
-          <i>D</i>
-          <i>&nbsp;</i>
-          <i>R</i>
-          <i>E</i>
-          <i>Q</i>
-          <i>U</i>
-          <i>E</i>
-          <i>S</i>
-          <i>T</i>
-        </button>
-      </div>
+    <li key={user.email} style={{ marginTop: "10px" }}>
+      <MDBCard className="users-card">
+        <MDBRow>
+          <MDBCol md="2">
+            <MDBCardImage
+              className="users-image"
+              src={`data:image/png;base64,${user.image}`}
+              position="top"
+              alt="user image"
+            />
+          </MDBCol>
+          <MDBCol md="10">
+            <MDBCardBody>
+              <MDBCardText className="users-name">
+                {user.firstName} {user.lastName}
+              </MDBCardText>
+              <p className="users-emails">{user.email}</p>
+              <MDBBtn
+                size="sm"
+                onClick={() => handleFriendRequest(user.email, from)}
+              >
+                Send Request
+              </MDBBtn>
+            </MDBCardBody>
+          </MDBCol>
+        </MDBRow>
+      </MDBCard>
     </li>
   );
 }
 
+function Feed({ friends, posts }) {
+  const authState = useSelector((state) => state.auth);
+  let feed = [];
+  if (typeof friends != "undefined") {
+    for (let i = 0; i < friends.length; i++) {
+      for (let j = 0; j < posts.length; j++) {
+        if (friends[i] === posts[j].email) {
+          feed.push(posts[j]);
+        }
+      }
+    }
+    for (let j = 0; j < posts.length; j++) {
+      if (authState.email === posts[j].email) {
+        feed.push(posts[j]);
+      }
+    }
+    feed.sort((a, b) => a.date - b.date);
+  }
+
+  return <Posts feed={feed} />;
+}
+
 function HomePage() {
   const state = useSelector((state) => state.auth);
+  const postState = useSelector((state) => state.post);
   const users = localStorage.getItem("users");
   const usersObj = JSON.parse(users);
   const user = usersObj.filter((user) => user.email !== state.email);
@@ -100,10 +115,16 @@ function HomePage() {
     <div>
       <Navbar state={state} />
       <Main>
-        <Box>
-          <List users={user} from={state.email} state={state} />
-        </Box>
-        <Box></Box>
+        <MDBRow>
+          <MDBCol md="3">
+            <h3 style={{ paddingLeft: "90px" }}>Friend Requests</h3>
+            <List users={user} from={state.email} state={state} />
+          </MDBCol>
+          <MDBCol md="9">
+            <h3>Your Feed</h3>
+            <Feed friends={state.friends} posts={postState} />
+          </MDBCol>
+        </MDBRow>
       </Main>
     </div>
   );

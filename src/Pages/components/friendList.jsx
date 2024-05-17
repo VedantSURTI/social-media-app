@@ -6,8 +6,15 @@ import { MDBBtn } from "mdb-react-ui-kit";
 
 function Item({ friendReq, state }) {
   const dispatch = useDispatch();
+  const users = JSON.parse(localStorage.getItem("users"));
   function handleAccept(email) {
     dispatch(acceptRequest(email));
+    for (let i = 0; i < users.length; i++) {
+      if (users[i].email === email) {
+        users[i].friends.push(state.email);
+      }
+    }
+    localStorage.setItem("users", JSON.stringify(users));
   }
   function handleReject(email) {
     dispatch(rejectRequest(email));
@@ -23,7 +30,9 @@ function Item({ friendReq, state }) {
         >
           Accept
         </MDBBtn>
-        <MDBBtn onClick={() => handleReject(friendReq)} color="danger">Decline</MDBBtn>
+        <MDBBtn onClick={() => handleReject(friendReq)} color="danger">
+          Decline
+        </MDBBtn>
       </span>
     </>
   );
