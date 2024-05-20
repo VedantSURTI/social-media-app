@@ -25,6 +25,7 @@ import ChangeButtons from "./components/ChangeButtons";
 import { setPost } from "../reducers/postSlice";
 import { useState } from "react";
 import PersonalFeedPost from "./components/PersonalFeedPost";
+import { handlePostNotification } from "../reducers/notificationSlice";
 
 export default function ProfilePage() {
   const state = useSelector((state) => state.auth);
@@ -93,6 +94,10 @@ export default function ProfilePage() {
     };
     setCaption("");
     reader.readAsDataURL(file);
+    const friends = state.friends;
+    for (let i = 0; i < friends.length; i++) {
+      dispatch(handlePostNotification(friends[i], state.email));
+    }
   }
   return (
     <section style={{ backgroundColor: "#eee" }}>

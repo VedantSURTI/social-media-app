@@ -7,11 +7,18 @@ import { useSelector } from "react-redux";
 import { useEffect } from "react";
 function App() {
   const postState = useSelector((state) => state.post);
+  const notificationState = useSelector((state) => state.notification);
   useEffect(
     function () {
       localStorage.setItem("post", JSON.stringify(postState));
     },
     [postState]
+  );
+  useEffect(
+    function () {
+      localStorage.setItem("notifications", JSON.stringify(notificationState));
+    },
+    [notificationState]
   );
   return (
     <div>

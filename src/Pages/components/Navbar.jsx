@@ -17,18 +17,19 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { useNavigate } from "react-router";
 import BasicModal from "./BasicModal";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "../../reducers/authSlice";
 import { NavLink } from "react-router-dom";
+import NotificationsModal from "./NotificationsModal";
 
 export default function PrimarySearchAppBar({ state }) {
+  const notificationState = useSelector((state) => state.notification);
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const navigate = useNavigate();
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -175,7 +176,12 @@ export default function PrimarySearchAppBar({ state }) {
               aria-label="show 4 new mails"
               color="inherit"
             >
-              <Badge badgeContent={state.friendRequests ?state.friendRequests.length : 0} color="error">
+              <Badge
+                badgeContent={
+                  state.friendRequests ? state.friendRequests.length : 0
+                }
+                color="error"
+              >
                 <BasicModal state={state} />
               </Badge>
             </IconButton>
@@ -184,8 +190,11 @@ export default function PrimarySearchAppBar({ state }) {
               aria-label="show 17 new notifications"
               color="inherit"
             >
-              <Badge badgeContent={0} color="error">
-                <NotificationsIcon />
+              <Badge
+                badgeContent={notificationState.length > 0 ? 1 : 0}
+                color="error"
+              >
+                <NotificationsModal />
               </Badge>
             </IconButton>
             <IconButton

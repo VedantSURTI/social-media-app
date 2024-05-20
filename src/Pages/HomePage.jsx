@@ -1,14 +1,10 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Navbar from "./components/Navbar";
 import React from "react";
 import { MDBRow, MDBCol, MDBCardText } from "mdb-react-ui-kit";
-import {
-  MDBCard,
-  MDBCardBody,
-  MDBCardImage,
-  MDBBtn,
-} from "mdb-react-ui-kit";
+import { MDBCard, MDBCardBody, MDBCardImage, MDBBtn } from "mdb-react-ui-kit";
 import Posts from "./components/Posts";
+import { handleFriendRequests } from "../reducers/notificationSlice";
 
 function Main({ children }) {
   return <main>{children}</main>;
@@ -37,7 +33,7 @@ function List({ users, from, state }) {
   );
 }
 function User({ user, from }) {
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   function handleFriendRequest(email, from) {
     const users = JSON.parse(localStorage.getItem("users"));
     for (let i = 0; i < users.length; i++) {
@@ -45,6 +41,7 @@ function User({ user, from }) {
         users[i].friendRequests.push(from);
       }
     }
+    dispatch(handleFriendRequests(email, from));
     localStorage.setItem("users", JSON.stringify(users));
   }
   return (

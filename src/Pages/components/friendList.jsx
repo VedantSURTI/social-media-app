@@ -3,12 +3,14 @@
 import { useDispatch } from "react-redux";
 import { acceptRequest, rejectRequest } from "../../reducers/authSlice";
 import { MDBBtn } from "mdb-react-ui-kit";
+import { handleAcceptNotification } from "../../reducers/notificationSlice";
 
 function Item({ friendReq, state }) {
   const dispatch = useDispatch();
   const users = JSON.parse(localStorage.getItem("users"));
   function handleAccept(email) {
     dispatch(acceptRequest(email));
+    dispatch(handleAcceptNotification(email, state.email));
     for (let i = 0; i < users.length; i++) {
       if (users[i].email === email) {
         users[i].friends.push(state.email);
