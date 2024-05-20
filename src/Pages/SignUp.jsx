@@ -95,7 +95,7 @@ export default function SignUp() {
         },
       ];
       // console.log(store.email);
-      if (store.email === null || !store.password === null)
+      if (store[0].email === null || !store[0].password === null)
         alert("Enter all the details");
       else {
         // Stringify the array and store it in localStorage
@@ -104,13 +104,13 @@ export default function SignUp() {
         localStorage.setItem("users", JSON.stringify(store));
         dispatch(
           setAuth(
-            store.email,
-            store.firstName,
-            store.lastName,
-            store.friendRequests,
-            store.friends,
-            store.image,
-            store.backgroundImage
+            store[0].email,
+            store[0].firstName,
+            store[0].lastName,
+            store[0].friendRequests,
+            store[0].friends,
+            store[0].image,
+            store[0].backgroundImage
           )
         );
         navigate("/homepage");
